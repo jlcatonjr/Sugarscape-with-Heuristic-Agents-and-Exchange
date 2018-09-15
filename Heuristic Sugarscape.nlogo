@@ -218,6 +218,98 @@ to setup
   reset-ticks
 end
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Runtime Procedures
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+to go
+  reset-global-stats
+  set prices-current-tick []
+  set age-of-death-list []
+  if not any? turtles [
+    stop
+  ]
+  ask patches [
+    patch-growback
+    patch-recolor
+  ]
+  ask turtles[
+    set traded? false
+    ; color represents class
+    ; size represents wealth
+    set-color-size
+
+    ;Wealth is calculated as: good / (metabolism rate for good)
+    update-wealth
+
+    if Trade? [
+     ; agents set bid-ask price
+     set-prices
+      ]
+
+    turtle-move
+
+    ;consume sugar, add good from patch to personal stock
+    turtle-eat
+
+
+    if Trade?[
+      ; find neighbor, bargain, trade
+      trade
+    ]
+    set age (age + 1)
+
+    ; die if agent runs out of sugar or water
+    if sugar <= 0 or water <= 0 [
+      set age-of-death-list lput age age-of-death-list
+      die
+    ]
+    if age > max-age [
+
+      hatch 1
+      [
+        turtle-hatch
+      ]
+      set age-of-death-list lput age age-of-death-list
+      die
+
+    ]
+    check-reproduction
+    if reproductive? [
+      if num-offspring < max-offspring [
+        if sugar > sugar-reserve-level and water > water-reserve-level [
+          if  sugar > maximum-sugar-endowment * 2 and water > maximum-water-endowment * 2 [
+
+            hatch 1
+            [
+              turtle-hatch
+            ]
+            set sugar sugar - maximum-sugar-endowment
+            set water water - maximum-water-endowment
+          ]
+        ]
+      ]
+    ]
+    ;; herrders slowly lower their threshold for max-wealth-trading-partner as the level
+    ;; of wealth per capita tends to fall as population grows
+    if herder?[set max-wealth-trading-partner .99 * max-wealth-trading-partner ]
+;    run visualization
+
+  ]
+
+  reset-global-lists
+  update-lorenz-and-gini
+  prepare-behavior-space-output
+  calculate-statistics
+  write-csv csv-name final-output
+  tick
+end
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Turtle Hatch and Setup Procedures
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 to turtle-setup ;; turtle procedure
   set traded? false
   set num-offspring 0
@@ -263,6 +355,8 @@ to set-vision-and-trade-points
       set trade-points sentence trade-points (list (list 0 ?) (list ? 0) (list 0 (- ?)) (list (- ?) 0))
     ]
 end
+
+
 
 to turtle-hatch  ;; turtle procedure
   set num-offspring 0
@@ -480,90 +574,8 @@ if mutate-arbitrageur? [
     ]
 ]
 end
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Runtime Procedures
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-to go
-  reset-global-stats
-  set prices-current-tick []
-  set age-of-death-list []
-  if not any? turtles [
-    stop
-  ]
-  ask patches [
-    patch-growback
-    patch-recolor
-  ]
-  ask turtles[
-    set traded? false
-    ; color represents class
-    ; size represents wealth
-    set-color-size
-
-    ;Wealth is calculated as: good / (metabolism rate for good)
-    update-wealth
-
-    if Trade? [
-     ; agents set bid-ask price
-     set-prices
-      ]
-
-    turtle-move
-
-    ;consume sugar, add good from patch to personal stock
-    turtle-eat
-
-
-    if Trade?[
-      ; find neighbor, bargain, trade
-      trade
-    ]
-    set age (age + 1)
-
-    ; die if agent runs out of sugar or water
-    if sugar <= 0 or water <= 0 [
-      set age-of-death-list lput age age-of-death-list
-      die
-    ]
-    if age > max-age [
-
-      hatch 1
-      [
-        turtle-hatch
-      ]
-      set age-of-death-list lput age age-of-death-list
-      die
-
-    ]
-    check-reproduction
-    if reproductive? [
-      if num-offspring < max-offspring [
-        if sugar > sugar-reserve-level and water > water-reserve-level [
-          if  sugar > maximum-sugar-endowment * 2 and water > maximum-water-endowment * 2 [
-
-            hatch 1
-            [
-              turtle-hatch
-            ]
-            set sugar sugar - maximum-sugar-endowment
-            set water water - maximum-water-endowment
-          ]
-        ]
-      ]
-    ]
-;    run visualization
-
-  ]
-  reset-global-lists
-  update-lorenz-and-gini
-  prepare-behavior-space-output
-  calculate-statistics
-  write-csv csv-name final-output
-  tick
-end
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; Turtle Procedures
+    ;; Turtle Exchange Procedures
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 to set-prices
@@ -1251,9 +1263,8 @@ to write-csv [ #filename #items ]
 end
 
 to prep-csv-name
-  set csv-name "0sugarscapemutate25shock10000movingreservelevels10final.csv"
-  set csv-name replace-item 0 csv-name (word behaviorspace-run-number)
-
+  set csv-name "Results/0sugarscapemutate25shock10000movingreservelevels10final.csv"
+  set csv-name replace-item 8 csv-name (word behaviorspace-run-number)
 end
 
 to-report quote [ #thing ]
