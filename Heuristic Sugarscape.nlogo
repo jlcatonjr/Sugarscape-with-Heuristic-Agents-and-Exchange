@@ -1988,11 +1988,11 @@ true
 true
 "" ""
 PENS
-"Basic" 1.0 0 -16777216 true "" "ifelse basic > 0 [plot wealth-basic / basic]\n[plot 0]"
-"Herder" 1.0 0 -7500403 true "" "ifelse herder > 0 [plot wealth-herder / herder]\n[plot 0]"
-"Arbitrageur" 1.0 0 -2674135 true "" "ifelse arbitrageur > 0 [plot wealth-arbitrageur / arbitrageur]\n[plot 0]"
-"Switcher" 1.0 0 -6459832 true "" "ifelse switcher > 0 [plot wealth-switcher / switcher]\n[plot 0]"
-"Overall" 1.0 0 -5825686 true "" "plot (wealth-basic + wealth-switcher) / population"
+"Basic" 1.0 0 -16777216 true "" "if ticks > 0[ifelse basic > 0 [plot wealth-basic / basic]\n[plot 0]]"
+"Herder" 1.0 0 -7500403 true "" "if ticks > 0[ifelse herder > 0 [plot wealth-herder / herder]\n[plot 0]]"
+"Arbitrageur" 1.0 0 -2674135 true "" "if ticks > 0[ifelse arbitrageur > 0 [plot wealth-arbitrageur / arbitrageur]\n[plot 0]]"
+"Switcher" 1.0 0 -6459832 true "" "if ticks > 0[ifelse switcher > 0 [plot wealth-switcher / switcher]\n[plot 0]]"
+"Overall" 1.0 0 -5825686 true "" "if ticks > 0 [plot (wealth-basic + wealth-switcher) / population]"
 
 @#$#@#$#@
 
@@ -2360,7 +2360,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.3.1
+NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
