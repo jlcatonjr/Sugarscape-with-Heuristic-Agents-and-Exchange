@@ -1455,7 +1455,7 @@ sugar-metabolism-scalar
 sugar-metabolism-scalar
 0
 2
-0.7812
+1.5
 .05
 1
 NIL
@@ -1593,7 +1593,7 @@ water-metabolism-scalar
 water-metabolism-scalar
 0
 2
-0.3968253968253968
+0.25
 .05
 1
 NIL
@@ -1888,84 +1888,6 @@ economic-switching?
 1
 -1000
 
-PLOT
-789
-962
-1303
-1192
-Mutate Rate
-NIL
-NIL
-0.0
-10.0
-0.0
-0.05
-true
-true
-"" ""
-PENS
-"Average" 1.0 0 -16777216 true "" "plot average-mutate-rate"
-"Median" 1.0 0 -7500403 true "" "plot median-mutate-rate"
-
-PLOT
-25
-370
-789
-720
-Prices
-NIL
-NIL
-0.0
-10.0
-0.0
-1.0
-true
-true
-"" ""
-PENS
-"Log Mean Price" 1.0 2 -6565750 true "" "ifelse ticks > 200 [plot mean-price-current-tick]\n[plot 0]"
-"50-Period RAP" 1.0 2 -16777216 true "" "ifelse ticks > 200 [plot mean mean-prices-for-last-fifty-ticks]\n[plot 0]"
-"E(Price)" 1.0 0 -2674135 true "" "plot ln (sugar-metabolism-scalar / water-metabolism-scalar)"
-
-PLOT
-24
-969
-706
-1189
-Population
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot count turtles"
-
-PLOT
-27
-719
-788
-969
-Class Composition
-NIL
-NIL
-0.0
-10.0
-0.0
-0.4
-true
-true
-"" ""
-PENS
-"Basic" 1.0 0 -16777216 true "" "plot percent-basic"
-"Herder" 1.0 0 -7500403 true "" "plot percent-herder"
-"Arbitrageur" 1.0 0 -2674135 true "" "plot percent-arbitrageur"
-"Switcher" 1.0 0 -6459832 true "" "plot percent-switcher"
-
 SLIDER
 707
 287
@@ -1981,47 +1903,6 @@ max-price-memory
 NIL
 HORIZONTAL
 
-PLOT
-789
-732
-1293
-962
-Mean Reserve Levels
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-true
-"" ""
-PENS
-"Sugar" 1.0 0 -16777216 true "" "plot mean-sugar-reserve-level"
-"Water" 1.0 0 -7500403 true "" "plot mean-water-reserve-level"
-
-PLOT
-789
-441
-1467
-733
-Wealth Per Capita
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-true
-"" ""
-PENS
-"Basic" 1.0 0 -16777216 true "" "ifelse basic > 0 [plot wealth-basic / basic]\n[plot 0]"
-"Herder" 1.0 0 -7500403 true "" "ifelse herder > 0 [plot wealth-herder / herder]\n[plot 0]"
-"Arbitrageur" 1.0 0 -2674135 true "" "ifelse arbitrageur > 0 [plot wealth-arbitrageur / arbitrageur]\n[plot 0]"
-"Switcher" 1.0 0 -6459832 true "" "ifelse switcher > 0 [plot wealth-switcher / switcher]\n[plot 0]"
-"Overall" 1.0 0 -5825686 true "" "plot (wealth-basic + wealth-switcher) / population"
-
 SLIDER
 756
 330
@@ -2031,7 +1912,7 @@ shock-size
 shock-size
 0
 1
-0.26
+1
 .01
 1
 NIL
@@ -4503,55 +4384,7 @@ set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
     <timeLimit steps="25000"/>
     <enumeratedValueSet variable="sugar-metabolism-scalar">
       <value value="0.25"/>
-      <value value="0.26"/>
-      <value value="0.27"/>
-      <value value="0.28"/>
-      <value value="0.29"/>
-      <value value="0.3"/>
-      <value value="0.31"/>
-      <value value="0.32"/>
-      <value value="0.33"/>
-      <value value="0.34"/>
-      <value value="0.35"/>
-      <value value="0.36"/>
-      <value value="0.37"/>
-      <value value="0.38"/>
-      <value value="0.39"/>
-      <value value="0.4"/>
-      <value value="0.41"/>
-      <value value="0.42"/>
-      <value value="0.43"/>
-      <value value="0.44"/>
-      <value value="0.45"/>
-      <value value="0.46"/>
-      <value value="0.47"/>
-      <value value="0.48"/>
-      <value value="0.49"/>
       <value value="0.5"/>
-      <value value="0.51"/>
-      <value value="0.52"/>
-      <value value="0.53"/>
-      <value value="0.54"/>
-      <value value="0.55"/>
-      <value value="0.56"/>
-      <value value="0.57"/>
-      <value value="0.58"/>
-      <value value="0.59"/>
-      <value value="0.6"/>
-      <value value="0.61"/>
-      <value value="0.62"/>
-      <value value="0.63"/>
-      <value value="0.64"/>
-      <value value="0.65"/>
-      <value value="0.66"/>
-      <value value="0.67"/>
-      <value value="0.68"/>
-      <value value="0.69"/>
-      <value value="0.7"/>
-      <value value="0.71"/>
-      <value value="0.72"/>
-      <value value="0.73"/>
-      <value value="0.74"/>
       <value value="0.75"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="water-metabolism-scalar">
@@ -4608,242 +4441,6 @@ set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
       <value value="0.48"/>
       <value value="0.49"/>
       <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="maximum-water-endowment">
-      <value value="25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-rate-of-endogenous-price-change">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-offspring">
-      <value value="20"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-basic?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-rate">
-      <value value="0.25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-pricing-strategy?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="probability-dynamic-pricing">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="economic-switching?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-expected-sugar-price">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="minimum-sugar-endowment">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-reserve-level">
-      <value value="2000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Trade?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-price-memory">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="show-price?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-turtle-vision">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-percent-basic">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="global-trade?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-arbitrageur?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="trade-vision-distance?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="minimum-water-endowment">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-ticks-per-switch">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-herder?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-price-rate?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="endogenous-arbitrageur-choice?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-percent-arbitrageurs">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="maximum-sugar-endowment">
-      <value value="25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-percent-herders">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="rate-of-price-change">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="varying shock size" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go
-if ticks = 15000[
-set sugar-metabolism-scalar sugar-metabolism-scalar * (1 + shock-size)
-set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
-]</go>
-    <timeLimit steps="25000"/>
-    <enumeratedValueSet variable="sugar-metabolism-scalar">
-      <value value="0.41"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="water-metabolism-scalar">
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="shock-size">
-      <value value="0.32"/>
-      <value value="0.33"/>
-      <value value="0.34"/>
-      <value value="0.35"/>
-      <value value="0.36"/>
-      <value value="0.37"/>
-      <value value="0.38"/>
-      <value value="0.39"/>
-      <value value="0.4"/>
-      <value value="0.41"/>
-      <value value="0.42"/>
-      <value value="0.43"/>
-      <value value="0.44"/>
-      <value value="0.45"/>
-      <value value="0.46"/>
-      <value value="0.47"/>
-      <value value="0.48"/>
-      <value value="0.49"/>
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="maximum-water-endowment">
-      <value value="25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-rate-of-endogenous-price-change">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-offspring">
-      <value value="20"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-basic?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-rate">
-      <value value="0.25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-pricing-strategy?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="probability-dynamic-pricing">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="economic-switching?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-expected-sugar-price">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="minimum-sugar-endowment">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-reserve-level">
-      <value value="2000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="Trade?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-price-memory">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="show-price?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-turtle-vision">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-percent-basic">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="500"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="global-trade?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-arbitrageur?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="trade-vision-distance?">
-      <value value="false"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="minimum-water-endowment">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="max-ticks-per-switch">
-      <value value="100"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-herder?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="mutate-price-rate?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="endogenous-arbitrageur-choice?">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-percent-arbitrageurs">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="maximum-sugar-endowment">
-      <value value="25"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-percent-herders">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="rate-of-price-change">
-      <value value="0.1"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="varying shock size" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go
-if ticks = 15000[
-set sugar-metabolism-scalar sugar-metabolism-scalar * (1 + shock-size)
-set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
-]</go>
-    <timeLimit steps="25000"/>
-    <enumeratedValueSet variable="sugar-metabolism-scalar">
-      <value value="0.42"/>
-      <value value="0.43"/>
-      <value value="0.44"/>
-      <value value="0.45"/>
-      <value value="0.46"/>
-      <value value="0.47"/>
-      <value value="0.48"/>
-      <value value="0.49"/>
-      <value value="0.5"/>
       <value value="0.51"/>
       <value value="0.52"/>
       <value value="0.53"/>
@@ -4869,61 +4466,31 @@ set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
       <value value="0.73"/>
       <value value="0.74"/>
       <value value="0.75"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="water-metabolism-scalar">
-      <value value="0.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="shock-size">
-      <value value="0.01"/>
-      <value value="0.02"/>
-      <value value="0.03"/>
-      <value value="0.04"/>
-      <value value="0.05"/>
-      <value value="0.06"/>
-      <value value="0.07"/>
-      <value value="0.08"/>
-      <value value="0.09"/>
-      <value value="0.1"/>
-      <value value="0.11"/>
-      <value value="0.12"/>
-      <value value="0.13"/>
-      <value value="0.14"/>
-      <value value="0.15"/>
-      <value value="0.16"/>
-      <value value="0.17"/>
-      <value value="0.18"/>
-      <value value="0.19"/>
-      <value value="0.2"/>
-      <value value="0.21"/>
-      <value value="0.22"/>
-      <value value="0.23"/>
-      <value value="0.24"/>
-      <value value="0.25"/>
-      <value value="0.26"/>
-      <value value="0.27"/>
-      <value value="0.28"/>
-      <value value="0.29"/>
-      <value value="0.3"/>
-      <value value="0.31"/>
-      <value value="0.32"/>
-      <value value="0.33"/>
-      <value value="0.34"/>
-      <value value="0.35"/>
-      <value value="0.36"/>
-      <value value="0.37"/>
-      <value value="0.38"/>
-      <value value="0.39"/>
-      <value value="0.4"/>
-      <value value="0.41"/>
-      <value value="0.42"/>
-      <value value="0.43"/>
-      <value value="0.44"/>
-      <value value="0.45"/>
-      <value value="0.46"/>
-      <value value="0.47"/>
-      <value value="0.48"/>
-      <value value="0.49"/>
-      <value value="0.5"/>
+      <value value="0.76"/>
+      <value value="0.77"/>
+      <value value="0.78"/>
+      <value value="0.79"/>
+      <value value="0.8"/>
+      <value value="0.81"/>
+      <value value="0.82"/>
+      <value value="0.83"/>
+      <value value="0.84"/>
+      <value value="0.85"/>
+      <value value="0.86"/>
+      <value value="0.87"/>
+      <value value="0.88"/>
+      <value value="0.89"/>
+      <value value="0.9"/>
+      <value value="0.91"/>
+      <value value="0.92"/>
+      <value value="0.93"/>
+      <value value="0.94"/>
+      <value value="0.95"/>
+      <value value="0.96"/>
+      <value value="0.97"/>
+      <value value="0.98"/>
+      <value value="0.99"/>
+      <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="maximum-water-endowment">
       <value value="25"/>
