@@ -403,7 +403,7 @@ to set-strategy
 
 
 ;  ifelse random-float 1 < probability-dynamic-pricing
-  set pricing-strategy 0
+  set pricing-strategy 1
 ;  [set pricing-strategy 1]
 
   set endogenous-rate-of-price-change random-float max-rate-of-endogenous-price-change
@@ -426,11 +426,11 @@ mutate-classes
 
 ;; Not in use for experiments in Dissertation
 if mutate-pricing-strategy? [
-if random-float 1 < self-mutate-rate [
-ifelse pricing-strategy = 0
-  [set pricing-strategy 1]
-  [set pricing-strategy 0]
-]
+  if random-float 1 < self-mutate-rate [
+    ifelse pricing-strategy = 0
+    [set pricing-strategy 1]
+    [set pricing-strategy 0]
+  ]
 ]
 
 
@@ -456,7 +456,9 @@ if endogenous-arbitrageur-choice?[
 end
 
 to set-expected-sugar-price
-  set expected-sugar-price e ^ (ln (1 / max-expected-sugar-price) + random-float (ln max-expected-sugar-price - ln (1 / max-expected-sugar-price)))  ;exp (random-normal 1 1)]
+  let logged-price random-float ln (1 / max-expected-sugar-price) + random-float ln max-expected-sugar-price
+;  if logged-price < ln (1 / max-expected-sugar-price) [ set logged-price ln (1 / max-expected-sugar-price)]
+  set expected-sugar-price e ^ (logged-price)  ;exp (random-normal 1 1)]
 ;  set expected-sugar-price 1 / max-expected-sugar-price + random-float (max-expected-sugar-price - 1 / max-expected-sugar-price)  ;exp (random-normal 1 1)]
 end
 
@@ -503,6 +505,12 @@ to go
   ask patches [
     patch-growback
     patch-recolor
+  ]
+
+  ; change metabolism if model includes shock
+  if ticks = period-of-shock[
+    set sugar-metabolism-scalar sugar-metabolism-scalar * (1 + shock-size)
+    set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
   ]
   ask turtles[
     set traded? false
@@ -622,11 +630,11 @@ to adjust-target-reserve-levels
 end
 
 to lower-price
-  set price price / (1 + random-float endogenous-rate-of-price-change)
+  set price price / (1 + random-float rate-of-price-change)
 end
 
 to raise-price
-  set price price * (1 + random-float endogenous-rate-of-price-change)
+  set price price * (1 + random-float rate-of-price-change)
 end
 
 to set-color-size
@@ -857,14 +865,11 @@ ifelse sugar?[
 
 end
 to record-prices [p sugar?]
-  ifelse sugar?[
-set past-sugar-price (p + past-sugar-price * price-memory) / (price-memory + 1)
-set price-difference (expected-sugar-price - past-sugar-price ) / expected-sugar-price
-  ]
-  [
-    set past-sugar-price (1 / p + past-sugar-price * price-memory) / (price-memory + 1)
-    set price-difference (expected-sugar-price - past-sugar-price ) / expected-sugar-price
-  ]
+  ; expect sugar price is a belief about the price of sugar in equilibrium
+  ; if the price of sugar is greater than I believe it should be, then price-difference < 0
+  if not sugar?[ set p 1 / p]
+  set past-sugar-price (p + past-sugar-price * price-memory) / (price-memory + 1)
+  set price-difference (expected-sugar-price - past-sugar-price ); / expected-sugar-price
 end
 
 to update-switcher-arbitrageur-preferences
@@ -894,6 +899,7 @@ if switcher?[ set ticks-to-switch ticks-to-switch + 1
   if arbitrageur? [; and water > water-reserve-level and sugar > sugar-reserve-level[
 
     if endogenous-arbitrageur-choice? [
+;      if sugar is more expensive then I think it should be in equilibrium, mine sugar
       ifelse price-difference < 0 [
         set sugar-true? true
         set water-true? false
@@ -903,16 +909,16 @@ if switcher?[ set ticks-to-switch ticks-to-switch + 1
         set water-true? true]
       ]
     ]
-    if endogenous-arbitrageur-choice? = false[
-      ifelse price-difference > 0[
-        set sugar-true? true
-        set water-true? false
-      ]
-      [
-        set sugar-true? false
-        set water-true? true
-      ]
-    ]
+;    if endogenous-arbitrageur-choice? = false[
+;      ifelse price-difference > 0[
+;        set sugar-true? true
+;        set water-true? false
+;      ]
+;      [
+;        set sugar-true? false
+;        set water-true? true
+;      ]
+;    ]
   ]
 end
 
@@ -1280,7 +1286,7 @@ to write-csv [ #filename #items ]
 end
 
 to prep-csv-name
-  set csv-name "Results/0sugarscapemutate25shock10000movingreservelevels10final.csv"
+  set csv-name "Results/0sugarscapemutate25shock5000movingreservelevels10final.csv"
   set csv-name replace-item 8 csv-name (word behaviorspace-run-number)
 end
 
@@ -1455,7 +1461,7 @@ sugar-metabolism-scalar
 sugar-metabolism-scalar
 0
 2
-0.7812
+1.125
 .05
 1
 NIL
@@ -1485,7 +1491,7 @@ max-reserve-level
 max-reserve-level
 0
 10000
-2000
+7800
 50
 1
 NIL
@@ -1593,7 +1599,7 @@ water-metabolism-scalar
 water-metabolism-scalar
 0
 2
-0.3968253968253968
+0.5
 .05
 1
 NIL
@@ -1608,7 +1614,7 @@ rate-of-price-change
 rate-of-price-change
 0
 .4
-0.1
+0.05
 .005
 1
 NIL
@@ -1699,7 +1705,7 @@ SWITCH
 215
 mutate-pricing-strategy?
 mutate-pricing-strategy?
-1
+0
 1
 -1000
 
@@ -2016,26 +2022,77 @@ true
 true
 "" ""
 PENS
-"Basic" 1.0 0 -16777216 true "" "ifelse basic > 0 [plot wealth-basic / basic]\n[plot 0]"
-"Herder" 1.0 0 -7500403 true "" "ifelse herder > 0 [plot wealth-herder / herder]\n[plot 0]"
-"Arbitrageur" 1.0 0 -2674135 true "" "ifelse arbitrageur > 0 [plot wealth-arbitrageur / arbitrageur]\n[plot 0]"
-"Switcher" 1.0 0 -6459832 true "" "ifelse switcher > 0 [plot wealth-switcher / switcher]\n[plot 0]"
-"Overall" 1.0 0 -5825686 true "" "plot (wealth-basic + wealth-switcher) / population"
+"Basic" 1.0 0 -16777216 true "" "if ticks > 0[ifelse basic > 0 [plot wealth-basic / basic]\n[plot 0]\n]"
+"Herder" 1.0 0 -7500403 true "" "if ticks > 0[ifelse herder > 0 [plot wealth-herder / herder]\n[plot 0]\n]"
+"Arbitrageur" 1.0 0 -2674135 true "" "if ticks > 0[ifelse arbitrageur > 0 [plot wealth-arbitrageur / arbitrageur]\n[plot 0]\n]"
+"Switcher" 1.0 0 -6459832 true "" "if ticks > 0[ifelse switcher > 0 [plot wealth-switcher / switcher]\n[plot 0]\n]"
+"Overall" 1.0 0 -5825686 true "" "if ticks > 0[plot (wealth-basic + wealth-switcher) / population]"
 
 SLIDER
-756
-330
-928
-363
+1420
+149
+1592
+182
 shock-size
 shock-size
 0
 1
-0.26
+0.5
 .01
 1
 NIL
 HORIZONTAL
+
+INPUTBOX
+1420
+56
+1576
+117
+period-of-shock
+7500
+1
+0
+Number
+
+TEXTBOX
+1416
+33
+1631
+59
+Period that agent metabolism shifts
+11
+0.0
+1
+
+TEXTBOX
+1418
+118
+1744
+157
+sugar-metabolism increases by magnitude of shock-size\nwater-metabolism decreases by magnitude of shock-size\n
+11
+0.0
+1
+
+PLOT
+1422
+826
+2086
+1240
+Expected Equilibrium Sugar Price of Arbitrageurs
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "ifelse count turtles with [arbitrageur?] > 0\n[plot mean [expected-sugar-price] of turtles with [arbitrageur?]]\n[plot 0]"
+"pen-1" 1.0 0 -7500403 true "" "ifelse count turtles with [arbitrageur?] > 0\n[plot mean [price-difference] of turtles with [arbitrageur?]]\n[plot 0]"
+"pen-2" 1.0 0 -2674135 true "" "ifelse count turtles with [arbitrageur?] > 0\n[plot mean [past-sugar-price] of turtles with [arbitrageur?]]\n[plot 0]"
 
 @#$#@#$#@
 
@@ -4493,121 +4550,36 @@ set water-metabolism-scalar water-metabolism-scalar / 2
       <value value="0.1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="varying shock size" repetitions="10" runMetricsEveryStep="true">
+  <experiment name="TTU Draft" repetitions="20" runMetricsEveryStep="true">
     <setup>setup</setup>
-    <go>go
-if ticks = 15000[
-set sugar-metabolism-scalar sugar-metabolism-scalar * (1 + shock-size)
-set water-metabolism-scalar water-metabolism-scalar / (1 + shock-size)
-]</go>
-    <timeLimit steps="25000"/>
+    <go>go</go>
+    <timeLimit steps="20000"/>
     <enumeratedValueSet variable="sugar-metabolism-scalar">
       <value value="0.25"/>
-      <value value="0.26"/>
-      <value value="0.27"/>
-      <value value="0.28"/>
-      <value value="0.29"/>
       <value value="0.3"/>
-      <value value="0.31"/>
-      <value value="0.32"/>
-      <value value="0.33"/>
-      <value value="0.34"/>
       <value value="0.35"/>
-      <value value="0.36"/>
-      <value value="0.37"/>
-      <value value="0.38"/>
-      <value value="0.39"/>
       <value value="0.4"/>
-      <value value="0.41"/>
-      <value value="0.42"/>
-      <value value="0.43"/>
-      <value value="0.44"/>
       <value value="0.45"/>
-      <value value="0.46"/>
-      <value value="0.47"/>
-      <value value="0.48"/>
-      <value value="0.49"/>
       <value value="0.5"/>
-      <value value="0.51"/>
-      <value value="0.52"/>
-      <value value="0.53"/>
-      <value value="0.54"/>
       <value value="0.55"/>
-      <value value="0.56"/>
-      <value value="0.57"/>
-      <value value="0.58"/>
-      <value value="0.59"/>
       <value value="0.6"/>
-      <value value="0.61"/>
-      <value value="0.62"/>
-      <value value="0.63"/>
-      <value value="0.64"/>
       <value value="0.65"/>
-      <value value="0.66"/>
-      <value value="0.67"/>
-      <value value="0.68"/>
-      <value value="0.69"/>
       <value value="0.7"/>
-      <value value="0.71"/>
-      <value value="0.72"/>
-      <value value="0.73"/>
-      <value value="0.74"/>
-      <value value="0.75"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="water-metabolism-scalar">
       <value value="0.5"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="shock-size">
-      <value value="0.01"/>
-      <value value="0.02"/>
-      <value value="0.03"/>
-      <value value="0.04"/>
-      <value value="0.05"/>
-      <value value="0.06"/>
-      <value value="0.07"/>
-      <value value="0.08"/>
-      <value value="0.09"/>
       <value value="0.1"/>
-      <value value="0.11"/>
-      <value value="0.12"/>
-      <value value="0.13"/>
-      <value value="0.14"/>
-      <value value="0.15"/>
-      <value value="0.16"/>
-      <value value="0.17"/>
-      <value value="0.18"/>
-      <value value="0.19"/>
       <value value="0.2"/>
-      <value value="0.21"/>
-      <value value="0.22"/>
-      <value value="0.23"/>
-      <value value="0.24"/>
-      <value value="0.25"/>
-      <value value="0.26"/>
-      <value value="0.27"/>
-      <value value="0.28"/>
-      <value value="0.29"/>
       <value value="0.3"/>
-      <value value="0.31"/>
-      <value value="0.32"/>
-      <value value="0.33"/>
-      <value value="0.34"/>
-      <value value="0.35"/>
-      <value value="0.36"/>
-      <value value="0.37"/>
-      <value value="0.38"/>
-      <value value="0.39"/>
       <value value="0.4"/>
-      <value value="0.41"/>
-      <value value="0.42"/>
-      <value value="0.43"/>
-      <value value="0.44"/>
-      <value value="0.45"/>
-      <value value="0.46"/>
-      <value value="0.47"/>
-      <value value="0.48"/>
-      <value value="0.49"/>
       <value value="0.5"/>
+      <value value="0.6"/>
+      <value value="0.7"/>
+      <value value="0.8"/>
+      <value value="0.9"/>
+      <value value="1"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="maximum-water-endowment">
       <value value="25"/>
